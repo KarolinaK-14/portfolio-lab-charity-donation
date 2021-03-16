@@ -35,6 +35,7 @@
         </div>
       </div>
     </header>
+
 {% endblock header %}
 
 {% block content %}
@@ -65,21 +66,18 @@
           <!-- STEP 1: class .active is switching steps -->
           <div data-step="1" class="active">
             <h3>Zaznacz co chcesz oddać:</h3>
-
+              {{form}}
+            {% for i in form.categories %}
             <div class="form-group form-group--checkbox">
               <label>
-                <input
-                  type="checkbox"
-                  name="categories"
-                  value="clothes-to-use"
-                />
+
                 <span class="checkbox"></span>
                 <span class="description"
-                  >ubrania, które nadają się do ponownego użycia</span
+                  >{{i.label_tag}}</span
                 >
               </label>
             </div>
-
+            {%endfor%}
             <div class="form-group form-group--checkbox">
               <label>
                 <input

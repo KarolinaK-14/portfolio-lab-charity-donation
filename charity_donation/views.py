@@ -1,8 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, FormView
-from .forms import RegisterForm
+from django.views.generic import TemplateView, FormView, CreateView
+from .forms import RegisterForm, DonationForm
 from .models import Institution, Donation
 from django.db.models import Sum
 from django.core.paginator import Paginator
@@ -25,8 +26,10 @@ class LandingPage(View):
         return render(request, "index.html", context=context)
 
 
-class AddDonation(TemplateView):
+class AddDonation(LoginRequiredMixin, CreateView):
+    login_url = reverse_lazy('login')
     template_name = "form.html"
+    form_class = DonationForm
 
 
 class Register(FormView):

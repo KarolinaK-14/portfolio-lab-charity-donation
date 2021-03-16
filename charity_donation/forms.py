@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 
+from charity_donation.models import Donation
+
 
 class RegisterForm(forms.ModelForm):
 
@@ -37,3 +39,12 @@ class RegisterForm(forms.ModelForm):
             msg = "Hasła muszą być takie same."
             self.add_error('password', msg)
             self.add_error('repeat_password', msg)
+
+
+class DonationForm(forms.ModelForm):
+    class Meta:
+        model = Donation
+        fields = ['categories']
+        widgets = {
+            'categories': forms.CheckboxSelectMultiple()
+        }
