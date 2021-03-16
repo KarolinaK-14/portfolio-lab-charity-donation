@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from charity_donation import views as v
 from .settings import DEBUG
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('', v.LandingPage.as_view(), name='landing_page'),
     path('add-donation/', v.AddDonation.as_view(), name='add_donation'),
-    path('login/', v.Login.as_view(), name='login'),
     path('register/', v.Register.as_view(), name='register'),
 ]
 

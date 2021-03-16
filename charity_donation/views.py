@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
+from .forms import RegisterForm
 from .models import Institution, Donation
 from django.db.models import Sum
 from django.core.paginator import Paginator
@@ -27,9 +29,14 @@ class AddDonation(TemplateView):
     template_name = "form.html"
 
 
-class Login(TemplateView):
-    template_name = "login.html"
-
-
-class Register(TemplateView):
+class Register(FormView):
+    form_class = RegisterForm
     template_name = "register.html"
+    success_url = reverse_lazy("login")
+
+    def form_valid(self, form):
+        user = form.save()
+        user.set_password(form.cleaned_data["password"])
+        user.username = form.cleaned_data["email"]
+        user.save()
+        return super().form_valid(form)
