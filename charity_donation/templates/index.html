@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block header %}
-{% with anonymous_user=True %}
 {% with add_donation=True %}
     <header class="header--main-page">
       <nav class="container container--70">
@@ -19,7 +18,6 @@
         </div>
       </div>
     </header>
-{% endwith %}
 {% endwith %}
 {% endblock header %}
 

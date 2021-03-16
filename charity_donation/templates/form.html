@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block header %}
-{% with logged_user=True %}
     <header class="header--form-page">
       <nav class="container container--70">
 
@@ -36,7 +35,6 @@
         </div>
       </div>
     </header>
-{% endwith %}
 {% endblock header %}
 
 {% block content %}

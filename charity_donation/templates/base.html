@@ -12,24 +12,22 @@
 
 {% block header %}
 
-{% if logged_user %}
+
 <ul class="nav--actions">
+  {% if user.is_authenticated %}
   <li class="logged-user">
-    Witaj Agata
+    Witaj {{ user }}
     <ul class="dropdown">
       <li><a href="#">Profil</a></li>
-      <li><a href="#">Moje zbiórki</a></li>
-      <li><a href="#">Wyloguj</a></li>
+      <li><a href="#">Ustawienia</a></li>
+      <li><a href="{% url 'logout' %}">Wyloguj</a></li>
     </ul>
   </li>
+{% else  %}
+  <li><a href="{% url 'login' %}" class="btn btn--small btn--without-border">Zaloguj</a></li>
+  <li><a href="{% url 'register' %}#register-form" class="btn btn--small btn--highlighted">Załóż konto</a></li>
+{% endif %}
 </ul>
-{% endif %}
-{% if anonymous_user %}
- <ul class="nav--actions">
-          <li><a href="{% url 'login' %}" class="btn btn--small btn--without-border">Zaloguj</a></li>
-          <li><a href="{% url 'register' %}#register-form" class="btn btn--small btn--highlighted">Załóż konto</a></li>
-        </ul>
-{% endif %}
 <ul>
   <li><a href="{% url 'landing_page' %}" class="btn btn--without-border active">Start</a></li>
   <li><a href="{% url 'landing_page' %}#steps" class="btn btn--without-border">O co chodzi?</a></li>
