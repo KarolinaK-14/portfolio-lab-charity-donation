@@ -1,8 +1,10 @@
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, FormView, CreateView
+from django.views.generic import FormView, CreateView
 from .forms import RegisterForm, DonationForm
 from .models import Institution, Donation
 from django.db.models import Sum
@@ -30,6 +32,22 @@ class AddDonation(LoginRequiredMixin, CreateView):
     login_url = reverse_lazy('login')
     template_name = "form.html"
     form_class = DonationForm
+
+
+class Login(FormView):
+    form_class = AuthenticationForm
+    template_name = "login.html"
+    success_url = reverse_lazy("landing_page")
+
+    def form_valid(self, form):
+        username = form.cleaned_data["username"]
+        password = form.cleaned_data["password"]
+        user = authenticate(username=username, password=password)
+        login(self.request, user=user)
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return redirect('/register/#register-form')
 
 
 class Register(FormView):
