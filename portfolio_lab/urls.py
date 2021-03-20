@@ -25,6 +25,7 @@ urlpatterns = [
     path("logout/", auth_views.LogoutView.as_view(next_page="landing_page"), name="logout"),
     path('', v.LandingPage.as_view(), name='landing_page'),
     path('add-donation/', v.AddDonation.as_view(), name='add_donation'),
+    path('donation-confirmation/', v.DonationConfirmation.as_view(), name='donation_confirmation'),
     path('register/', v.Register.as_view(), name='register'),
 ]
 

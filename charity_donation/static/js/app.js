@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function() {
       });
 
       // Form submit
-      this.$form.querySelector("form").addEventListener("submit", e => this.submit(e));
+      // this.$form.querySelector("form").addEventListener("submit", e => this.submit(e));
     }
 
     /**
@@ -234,7 +234,70 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 6;
       this.$step.parentElement.hidden = this.currentStep >= 6;
 
-      // TODO: get data from inputs and show them in summary
+      /**
+       * Display only institutions containing the categories chosen in the previous step.
+       */
+      const c_inputs = document.getElementsByName('categories');
+      const institution_label = document.querySelectorAll('#institution-label');
+      const btn_1 = document.getElementById("chosen-categories");
+      btn_1.addEventListener("click", e => {
+        institution_label.forEach(function (i) {
+          i.removeAttribute('style');
+        });
+        let c_checked = [];
+        c_inputs.forEach(function (c) {
+          if (c.checked) {
+            c_checked.push(c.value);
+          }
+        });
+        institution_label.forEach(function (i) {
+          const cat = i.querySelectorAll('#cat');
+          const cat_txt = [];
+          cat.forEach(function (j) {
+            cat_txt.push(j.textContent);
+          });
+          if (cat_txt.some(el => c_checked.includes(el)) === false) {
+            i.style.display = 'none';
+          }
+        });
+      });
+
+      /**
+       * Get data from inputs and show them in summary
+       */
+      const btn = document.getElementById('donation-confirmation');
+      btn.addEventListener('click', e => {
+        document.querySelectorAll(".summary--text")[0].textContent = document.getElementById('id_quantity').value;
+        document.querySelectorAll(".form-section--column ul li")[0].textContent = document.getElementById('id_address').value;
+        document.querySelectorAll(".form-section--column ul li")[1].textContent = document.getElementById('id_city').value;
+        document.querySelectorAll(".form-section--column ul li")[2].textContent = document.getElementById('id_zip_code').value;
+        document.querySelectorAll(".form-section--column ul li")[3].textContent = document.getElementById('id_phone_number').value;
+        document.querySelectorAll(".form-section--column ul li")[4].textContent = document.getElementById('id_pick_up_date').value;
+        document.querySelectorAll(".form-section--column ul li")[5].textContent = document.getElementById('id_pick_up_time').value;
+        document.querySelectorAll(".form-section--column ul li")[6].textContent = document.getElementById('id_pick_up_comment').value;
+        const i_inputs = document.getElementsByName('institution')
+        i_inputs.forEach(function(i) {
+          if (i.checked) {
+            const institution = i.parentElement.children[2].firstElementChild.innerHTML;
+            document.querySelectorAll(".summary--text")[1].textContent = "dla fundacji " + '"' + institution + '"';
+          }
+        })
+      })
+
+      /**
+       * Display the error message if there are empty fields in the form.
+       */
+      const submit_prev_btn = document.getElementById("submit-prev");
+      submit_prev_btn.addEventListener("click", e => {
+        document.getElementById("error-msg").innerHTML="";
+      });
+      const submit_btn = document.getElementById("submit");
+      submit_btn.addEventListener("click", e => {
+        if (document.querySelector("form").checkValidity() === false) {
+          document.getElementById("error-msg").innerHTML="Uzupełnij wszystkie pola formularza";
+        }
+      });
+
     }
 
     /**
@@ -242,11 +305,12 @@ document.addEventListener("DOMContentLoaded", function() {
      *
      * TODO: validation, send data to server
      */
-    submit(e) {
-      e.preventDefault();
-      this.currentStep++;
-      this.updateForm();
-    }
+
+    // submit(e) {
+    //   e.preventDefault();
+    //   this.currentStep++;
+    //   this.updateForm();
+    // }
   }
   const form = document.querySelector(".form--steps");
   if (form !== null) {

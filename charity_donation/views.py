@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import FormView, CreateView
+from django.views.generic import FormView, CreateView, TemplateView
 from .forms import RegisterForm, DonationForm
 from .models import Institution, Donation
 from django.db.models import Sum
@@ -28,10 +29,37 @@ class LandingPage(View):
         return render(request, "index.html", context=context)
 
 
-class AddDonation(LoginRequiredMixin, CreateView):
+class AddDonation(LoginRequiredMixin, View):
     login_url = reverse_lazy('login')
-    template_name = "form.html"
-    form_class = DonationForm
+
+    def get(self, request):
+        form = DonationForm()
+        institutions = Institution.objects.all()
+        return render(request, "form.html", {"form": form, 'institutions': institutions})
+
+    def post(self, request):
+        form = DonationForm(request.POST)
+        if form.is_valid():
+            categories = form.cleaned_data["categories"]
+            quantity = form.cleaned_data["quantity"]
+            institution = form.cleaned_data["institution"]
+            address = form.cleaned_data["address"]
+            city = form.cleaned_data["city"]
+            zip_code = form.cleaned_data["zip_code"]
+            phone_number = form.cleaned_data["phone_number"]
+            pick_up_time = form.cleaned_data["pick_up_time"]
+            pick_up_date = form.cleaned_data["pick_up_date"]
+            pick_up_comment = form.cleaned_data["pick_up_comment"]
+            donation = Donation(quantity=quantity,institution=institution,address=address,city=city,zip_code=zip_code,phone_number=phone_number,pick_up_date=pick_up_date,pick_up_time=pick_up_time,pick_up_comment=pick_up_comment)
+            donation.save()
+            donation.categories.set(categories)
+            donation.save()
+            return redirect('donation_confirmation')
+        return render(request, "form.html", {"form": form, 'institutions': institutions})
+
+
+class DonationConfirmation(TemplateView):
+    template_name = "form-confirmation.html"
 
 
 class Login(FormView):
