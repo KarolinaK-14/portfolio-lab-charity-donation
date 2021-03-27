@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block header %}
+    <header>
+      <nav class="container container--70">
+
+        {{ block.super }}
+
+      </nav>
+    </header>
+{% endblock header %}
+
+{% block content %}
+    <section id="about-us" class="about-us">
+      <div class="about-us--text">
+        <h2>Profil użytkownika</h2>
+
+          <p><strong>Imię: </strong>{{user.first_name|default:"nie podano"}}</p>
+          <p><strong>Nazwisko: </strong>{{user.last_name|default:"nie podano"}}</p>
+          <p><strong>Email: </strong>{{user.email}}</p>
+      </div>
+      <div class="about-us--text">
+          <p style="font-size: 2.2rem"><strong>Przekazane dary:</strong></p>
+          {%for donation in user_donations %}
+          <form action="{% url 'archive' donation.id %}" method="post">{% csrf_token %}
+          <ul style="margin-right: 40px; font-size: large">
+              {%if donation.is_taken %}
+          <li style="color: grey">
+              Liczba worków: {{donation.quantity}} //
+              Kategorie: {%for cat in donation.categories.all%}{{cat}}{% if not forloop.last %}, {% endif %}{%endfor%} //
+              Organizacja: {{donation.institution}}
+              <br>
+              Data odbioru: {{donation.pick_up_date}} ODEBRANY
+              <button type="submit" name="archive-remove">Nieodebrany</button>
+          </li>
+              {%else%}
+          <li>
+              Liczba worków: {{donation.quantity}} //
+              Kategorie: {%for cat in donation.categories.all%}{{cat}}{% if not forloop.last %}, {% endif %}{%endfor%} //
+              Organizacja: {{donation.institution}}
+              <br>
+              Data odbioru: {{donation.pick_up_date}} NIEODEBRANY
+              <button type="submit" name="archive-add">Odebrany</button>
+          </li>
+              {%endif%}
+          </ul>
+          </form>
+          {%endfor%}
+      </div>
+    </section>
+{% endblock content %}

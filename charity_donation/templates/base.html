@@ -18,9 +18,9 @@
   <li class="logged-user">
     Witaj {{ user }}
     <ul class="dropdown">
-      <li><a href="#">Profil</a></li>
+      <li><a href="{% url 'user' %}">Profil</a></li>
       <li><a href="#">Ustawienia</a></li>
-      {% if user.is_staff %}
+      {% if user.is_staff and user.is_superuser %}
       <li><a href="{% url 'admin:index' %}">Panel administracyjny</a></li>
       {% endif %}
       <li><a href="{% url 'logout' %}">Wyloguj</a></li>

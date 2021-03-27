@@ -63,9 +63,14 @@
       <div class="form--steps-container">
         <div class="form--steps-counter">Krok <span>1</span>/5</div>
 
-        <form action="" method="post">{%csrf_token%}
+        <form action="" method="post" >{%csrf_token%}
+
+
+
           <!-- STEP 1: class .active is switching steps -->
+
           <div data-step="1" class="active">
+
             <h3>Zaznacz co chcesz oddać:</h3>
 
             {% for choice in form.categories %}
@@ -157,9 +162,7 @@
                 </div>
 
                 <div class="form-group form-group--inline">
-                  <label>
-                    Numer telefonu {{form.phone_number}}
-                  </label>
+                  <label>Numer telefonu {{form.phone_number}}</label>
                 </div>
               </div>
 
@@ -189,7 +192,9 @@
 
           <!-- STEP 5 -->
           <div data-step="5">
-            <h3 style="text-align: center; color: red" id="error-msg"></h3>
+
+            <h3 style="text-align: center; color: red;" id="error-msg"></h3>
+
             <h3>Podsumowanie Twojej darowizny</h3>
 
             <div class="summary">
@@ -232,7 +237,7 @@
 
             <div class="form-group form-group--buttons">
               <button type="button" id="submit-prev" class="btn prev-step">Wstecz</button>
-              <button type="submit" id="submit" class="btn">Potwierdzam</button>
+              <button type="submit" id="submit-btn" class="btn">Potwierdzam</button>
             </div>
           </div>
         </form>

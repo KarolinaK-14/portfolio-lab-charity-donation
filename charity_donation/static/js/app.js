@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function() {
       });
 
       // Form submit
-      // this.$form.querySelector("form").addEventListener("submit", e => this.submit(e));
+      // this.$form.querySelector("form").addEventListener("submit", e => this.submit_func(e));
     }
 
     /**
@@ -276,7 +276,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll(".form-section--column ul li")[5].textContent = document.getElementById('id_pick_up_time').value;
         document.querySelectorAll(".form-section--column ul li")[6].textContent = document.getElementById('id_pick_up_comment').value;
         const i_inputs = document.getElementsByName('institution')
-        i_inputs.forEach(function(i) {
+        i_inputs.forEach(function (i) {
           if (i.checked) {
             const institution = i.parentElement.children[2].firstElementChild.innerHTML;
             document.querySelectorAll(".summary--text")[1].textContent = "dla fundacji " + '"' + institution + '"';
@@ -291,13 +291,12 @@ document.addEventListener("DOMContentLoaded", function() {
       submit_prev_btn.addEventListener("click", e => {
         document.getElementById("error-msg").innerHTML="";
       });
-      const submit_btn = document.getElementById("submit");
+      const submit_btn = document.getElementById("submit-btn");
       submit_btn.addEventListener("click", e => {
         if (document.querySelector("form").checkValidity() === false) {
-          document.getElementById("error-msg").innerHTML="Uzupełnij wszystkie pola formularza";
+          document.getElementById("error-msg").innerText = "Uzupełnij wszystkie pola formularza";
         }
       });
-
     }
 
     /**
@@ -306,10 +305,10 @@ document.addEventListener("DOMContentLoaded", function() {
      * TODO: validation, send data to server
      */
 
-    // submit(e) {
-    //   e.preventDefault();
-    //   this.currentStep++;
-    //   this.updateForm();
+    // submit_func(e) {
+    // e.preventDefault()
+    // this.currentStep++;
+    // this.updateForm();
     // }
   }
   const form = document.querySelector(".form--steps");

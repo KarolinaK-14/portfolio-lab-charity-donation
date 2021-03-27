@@ -27,6 +27,8 @@ urlpatterns = [
     path('add-donation/', v.AddDonation.as_view(), name='add_donation'),
     path('donation-confirmation/', v.DonationConfirmation.as_view(), name='donation_confirmation'),
     path('register/', v.Register.as_view(), name='register'),
+    path('user/', v.User.as_view(), name='user'),
+    path('archive/<int:pk>/', v.Archive.as_view(), name='archive'),
 ]
 
 if DEBUG:

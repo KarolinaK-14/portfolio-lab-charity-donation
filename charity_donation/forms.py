@@ -54,10 +54,3 @@ class DonationForm(forms.ModelForm):
             'pick_up_time': forms.TimeInput(attrs={'type': 'time'}),
             'pick_up_comment': forms.Textarea(attrs={'rows': 5}),
         }
-
-    # def clean(self):
-    #     cleaned_data = super().clean()
-    #     institution = cleaned_data.get('institution')
-    #     institution_categories = cleaned_data.get('institution_categories')
-    #     institution_categories = Category.object.filter(institution=institution)
-

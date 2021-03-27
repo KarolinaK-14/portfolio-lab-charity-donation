@@ -37,8 +37,9 @@ class Donation(models.Model):
     zip_code = models.CharField(max_length=6, validators=[RegexValidator(regex=r'^\d{2}-\d{3}$', message='Podaj poprawny kod pocztowy w formacie 99-999')])
     pick_up_date = models.DateField()
     pick_up_time = models.TimeField()
-    pick_up_comment = models.TextField()
+    pick_up_comment = models.TextField(null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    is_taken = models.BooleanField(default=False)
 
     def __str__(self):
         return f"dla {self.institution.name}"

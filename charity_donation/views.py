@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import FormView, CreateView, TemplateView
+from django.views.generic import FormView, CreateView, TemplateView, DetailView, UpdateView
 from .forms import RegisterForm, DonationForm
 from .models import Institution, Donation
 from django.db.models import Sum
@@ -38,7 +38,9 @@ class AddDonation(LoginRequiredMixin, View):
         return render(request, "form.html", {"form": form, 'institutions': institutions})
 
     def post(self, request):
-        form = DonationForm(request.POST)
+        form = DonationForm(request.POST or None)
+        form.use_required_attribute = False
+        institutions = Institution.objects.all()
         if form.is_valid():
             categories = form.cleaned_data["categories"]
             quantity = form.cleaned_data["quantity"]
@@ -50,7 +52,7 @@ class AddDonation(LoginRequiredMixin, View):
             pick_up_time = form.cleaned_data["pick_up_time"]
             pick_up_date = form.cleaned_data["pick_up_date"]
             pick_up_comment = form.cleaned_data["pick_up_comment"]
-            donation = Donation(quantity=quantity,institution=institution,address=address,city=city,zip_code=zip_code,phone_number=phone_number,pick_up_date=pick_up_date,pick_up_time=pick_up_time,pick_up_comment=pick_up_comment)
+            donation = Donation(quantity=quantity,institution=institution,address=address,city=city,zip_code=zip_code,phone_number=phone_number,pick_up_date=pick_up_date,pick_up_time=pick_up_time,pick_up_comment=pick_up_comment,user=request.user)
             donation.save()
             donation.categories.set(categories)
             donation.save()
@@ -89,3 +91,28 @@ class Register(FormView):
         user.username = form.cleaned_data["email"]
         user.save()
         return super().form_valid(form)
+
+
+class User(View):
+    def get(self, request):
+        user_donations = request.user.donation_set.order_by("is_taken")
+        return render(request, 'user_profile.html', {"user_donations": user_donations})
+
+
+class Archive(View):
+    def post(self, request, pk):
+        donation = request.user.donation_set.get(pk=pk)
+        if "archive-add" in request.POST:
+            donation.is_taken = True
+            donation.save()
+            return redirect('user')
+        if "archive-remove" in request.POST:
+            donation.is_taken = False
+            donation.save()
+            return redirect('user')
+
+
+
+
+
+
