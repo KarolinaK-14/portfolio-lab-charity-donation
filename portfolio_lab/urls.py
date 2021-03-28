@@ -29,6 +29,8 @@ urlpatterns = [
     path('register/', v.Register.as_view(), name='register'),
     path('user/', v.User.as_view(), name='user'),
     path('archive/<int:pk>/', v.Archive.as_view(), name='archive'),
+    path('edit-user/', v.UserUpdate.as_view(), name='edit-user'),
+    path('change-password/', v.PasswordChange.as_view(), name='change-password'),
 ]
 
 if DEBUG:

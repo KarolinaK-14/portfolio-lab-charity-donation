@@ -19,7 +19,7 @@
     Witaj {{ user }}
     <ul class="dropdown">
       <li><a href="{% url 'user' %}">Profil</a></li>
-      <li><a href="#">Ustawienia</a></li>
+      <li><a href="{% url 'edit-user' %}">Ustawienia</a></li>
       {% if user.is_staff and user.is_superuser %}
       <li><a href="{% url 'admin:index' %}">Panel administracyjny</a></li>
       {% endif %}

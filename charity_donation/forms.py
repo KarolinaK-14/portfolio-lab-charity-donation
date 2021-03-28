@@ -1,7 +1,7 @@
+from charity_donation.models import Donation, Category, Institution
+
 from django import forms
 from django.contrib.auth.models import User
-
-from charity_donation.models import Donation, Category, Institution
 
 
 class RegisterForm(forms.ModelForm):

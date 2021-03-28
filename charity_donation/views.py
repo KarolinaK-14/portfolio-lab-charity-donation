@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User as U
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse_lazy
@@ -38,8 +40,7 @@ class AddDonation(LoginRequiredMixin, View):
         return render(request, "form.html", {"form": form, 'institutions': institutions})
 
     def post(self, request):
-        form = DonationForm(request.POST or None)
-        form.use_required_attribute = False
+        form = DonationForm(request.POST)
         institutions = Institution.objects.all()
         if form.is_valid():
             categories = form.cleaned_data["categories"]
@@ -97,6 +98,35 @@ class User(View):
     def get(self, request):
         user_donations = request.user.donation_set.order_by("is_taken")
         return render(request, 'user_profile.html', {"user_donations": user_donations})
+
+
+class PasswordChange(PasswordChangeView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy("user")
+    template_name = "password_change.html"
+
+
+class UserUpdate(View):
+
+    def get(self, request):
+        form = RegisterForm(initial={'first_name': request.user.first_name, 'last_name': request.user.last_name, 'email': request.user.email} )
+        return render(request, "user_profile_update.html", {'form': form})
+
+    def post(self, request):
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            success = request.user.check_password(form.cleaned_data['password'])
+            if success:
+                request.user.first_name = first_name
+                request.user.last_name = last_name
+                request.user.email = email
+                request.user.save()
+                return redirect('user')
+        else:
+            return redirect('edit-user')
 
 
 class Archive(View):
