@@ -117,7 +117,8 @@ INTERNAL_IPS = [
 ]
 
 
+
 try:
-    from portfolio_lab.local_settings import DATABASES
+    from portfolio_lab.local_settings import *
 except ImportError:
     pass

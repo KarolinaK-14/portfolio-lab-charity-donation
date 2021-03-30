@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 from charity_donation import views as v
@@ -31,6 +32,9 @@ urlpatterns = [
     path('archive/<int:pk>/', v.Archive.as_view(), name='archive'),
     path('edit-user/', v.UserUpdate.as_view(), name='edit-user'),
     path('change-password/', v.PasswordChange.as_view(), name='change-password'),
+    path('activate/<uidb64>/<token>/', v.ActivateAccount.as_view(), name='activate'),
+    # url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+    #     v.activate, name='activate')
 ]
 
 if DEBUG:

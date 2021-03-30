@@ -1,17 +1,26 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User as U
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
+from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, resolve_url
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils import timezone
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from django.views.generic import FormView, CreateView, TemplateView, DetailView, UpdateView
 from .forms import RegisterForm, DonationForm
 from .models import Institution, Donation
 from django.db.models import Sum
 from django.core.paginator import Paginator
+from django.core.mail import EmailMessage
+
+from .tokens import account_activation_token
 
 
 class LandingPage(View):
@@ -31,8 +40,7 @@ class LandingPage(View):
         return render(request, "index.html", context=context)
 
 
-class AddDonation(LoginRequiredMixin, View):
-    login_url = reverse_lazy('login')
+class AddDonation(View):
 
     def get(self, request):
         form = DonationForm()
@@ -81,22 +89,63 @@ class Login(FormView):
         return redirect('/register/#register-form')
 
 
-class Register(FormView):
+class Register(View):
     form_class = RegisterForm
-    template_name = "register.html"
-    success_url = reverse_lazy("login")
+    template_name = 'register.html'
 
-    def form_valid(self, form):
-        user = form.save()
-        user.set_password(form.cleaned_data["password"])
-        user.username = form.cleaned_data["email"]
-        user.save()
-        return super().form_valid(form)
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+
+            user = form.save(commit=False)
+
+            user.set_password(form.cleaned_data["password"])
+            user.username = form.cleaned_data["email"]
+            user.is_active = False # Deactivate account till it is confirmed
+            user.save()
+
+            current_site = get_current_site(request)
+            subject = 'Oddam w dobre ręce - aktywuj konto'
+            message = render_to_string('account_activation_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            user.email_user(subject, message)
+
+
+            return render(request, 'email-confirmation.html')
+
+        return render(request, self.template_name, {'form': form})
+
+
+class ActivateAccount(View):
+
+    def get(self, request, uidb64, token, *args, **kwargs):
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = U.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, U.DoesNotExist):
+            user = None
+
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.profile.email_confirmed = True
+            user.save()
+            login(request, user)
+            return redirect('landing_page')
+        else:
+            return render(request, 'email-confirmation-failed.html')
 
 
 class User(View):
     def get(self, request):
-        user_donations = request.user.donation_set.order_by("is_taken")
+        user_donations = request.user.donation_set.order_by('is_taken', '-pick_up_time')
         return render(request, 'user_profile.html', {"user_donations": user_donations})
 
 
@@ -134,6 +183,7 @@ class Archive(View):
         donation = request.user.donation_set.get(pk=pk)
         if "archive-add" in request.POST:
             donation.is_taken = True
+            donation.taken_time = timezone.now()
             donation.save()
             return redirect('user')
         if "archive-remove" in request.POST:

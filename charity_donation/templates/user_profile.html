@@ -11,7 +11,7 @@
 {% endblock header %}
 
 {% block content %}
-    <section id="about-us" class="about-us">
+    <section class="about-us">
       <div class="about-us--text">
         <h2>Profil użytkownika</h2>
 
@@ -23,23 +23,21 @@
           <p style="font-size: 2.2rem"><strong>Przekazane dary:</strong></p>
           {%for donation in user_donations %}
           <form action="{% url 'archive' donation.id %}" method="post">{% csrf_token %}
-          <ul style="margin-right: 40px; font-size: large">
+          <ul style="font-size: large">
               {%if donation.is_taken %}
           <li style="color: grey">
               Liczba worków: {{donation.quantity}} //
               Kategorie: {%for cat in donation.categories.all%}{{cat}}{% if not forloop.last %}, {% endif %}{%endfor%} //
-              Organizacja: {{donation.institution}}
+              Organizacja: {{donation.institution}} // Data odbioru: {{donation.pick_up_date}}
               <br>
-              Data odbioru: {{donation.pick_up_date}} ODEBRANY
+              Status: ODEBRANY Aktualizacja: {{donation.taken_time}}
               <button type="submit" name="archive-remove">Nieodebrany</button>
           </li>
               {%else%}
-          <li>
-              Liczba worków: {{donation.quantity}} //
-              Kategorie: {%for cat in donation.categories.all%}{{cat}}{% if not forloop.last %}, {% endif %}{%endfor%} //
-              Organizacja: {{donation.institution}}
+          <li>Liczba worków: {{donation.quantity}} // Kategorie: {%for cat in donation.categories.all%}{{cat}}{% if not forloop.last %}, {% endif %}{%endfor%} // Organizacja: {{donation.institution}}
+              // Data odbioru: {{donation.pick_up_date}}
               <br>
-              Data odbioru: {{donation.pick_up_date}} NIEODEBRANY
+              Status: NIEODEBRANY Aktualizacja {{donation.taken_time}}
               <button type="submit" name="archive-add">Odebrany</button>
           </li>
               {%endif%}

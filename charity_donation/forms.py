@@ -54,3 +54,14 @@ class DonationForm(forms.ModelForm):
             'pick_up_time': forms.TimeInput(attrs={'type': 'time'}),
             'pick_up_comment': forms.Textarea(attrs={'rows': 5}),
         }
+        help_texts = {
+            'categories': 'Wybierz co najmniej jedną kategorię. Wymagane.',
+            'quantity': 'Podaj liczbe. Wymagane.',
+            'institution': 'Wybierz jedną organizację. Wymagane.',
+            'address': 'Wymagane.',
+            'zip_code': 'Wymagane.',
+            'city': 'Wymagane.',
+            'phone_number': 'Wymagane.',
+            'pick_up_date': 'Wymagane.',
+            'pick_up_time': 'Wymagane.',
+        }
