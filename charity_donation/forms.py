@@ -65,3 +65,15 @@ class DonationForm(forms.ModelForm):
             'pick_up_date': 'Wymagane.',
             'pick_up_time': 'Wymagane.',
         }
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Imię"})
+    )
+    surname = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Nazwisko"})
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={"placeholder": "Wiadomość", "rows": "1"})
+    )

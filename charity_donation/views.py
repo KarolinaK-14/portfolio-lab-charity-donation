@@ -14,11 +14,11 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from django.views.generic import FormView, CreateView, TemplateView, DetailView, UpdateView
-from .forms import RegisterForm, DonationForm
+from .forms import RegisterForm, DonationForm, ContactForm
 from .models import Institution, Donation
 from django.db.models import Sum
 from django.core.paginator import Paginator
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail, mail_admins
 
 from .tokens import account_activation_token
 
@@ -31,14 +31,33 @@ class LandingPage(View):
         page2 = request.GET.get('page2')
         paginator3 = Paginator(Institution.objects.filter(type='zbiórka lokalna'), 5)
         page3 = request.GET.get('page3')
+        form = ContactForm()
+
         context = {'donations': Donation.objects.all().aggregate(Sum("quantity"))["quantity__sum"],
                    'institutions': Institution.objects.filter(donation__isnull=False).count(),
                    'foundations': paginator1.get_page(page1),
                    'non_gov_organizations': paginator2.get_page(page2),
                    'collections': paginator3.get_page(page3),
+                   "form": form
                    }
         return render(request, "index.html", context=context)
 
+    def post(self, request):
+
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            surname = form.cleaned_data["surname"]
+            admins = U.objects.filter(is_staff=True, is_superuser=True)
+            send_mail(
+                subject=f"Oddam w dobre ręce - Wiaodmość od użytkownika {name.capitalize()} {surname.capitalize()}",
+                message=form.cleaned_data["message"],  # message body
+                from_email=request.user.email,  # from
+                recipient_list=[a.email for a in admins],  # to
+            )
+            form = ContactForm()  # once message sent, clear the form
+            return render(request, "index.html", {"form": form, 'name': name})
+        return render(request, "index.html", {"form": form})
 
 class AddDonation(View):
 
@@ -190,6 +209,7 @@ class Archive(View):
             donation.is_taken = False
             donation.save()
             return redirect('user')
+
 
 
 

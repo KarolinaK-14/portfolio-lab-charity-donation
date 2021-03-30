@@ -33,8 +33,7 @@ urlpatterns = [
     path('edit-user/', v.UserUpdate.as_view(), name='edit-user'),
     path('change-password/', v.PasswordChange.as_view(), name='change-password'),
     path('activate/<uidb64>/<token>/', v.ActivateAccount.as_view(), name='activate'),
-    # url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-    #     v.activate, name='activate')
+
 ]
 
 if DEBUG:
