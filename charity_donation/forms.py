@@ -1,3 +1,6 @@
+from django.contrib.auth.password_validation import password_validators_help_texts, password_validators_help_text_html, \
+    validate_password
+
 from charity_donation.models import Donation, Category, Institution
 
 from django import forms
@@ -5,9 +8,8 @@ from django.contrib.auth.models import User
 
 
 class RegisterForm(forms.ModelForm):
-
-    repeat_password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Powtórz hasło"}), label="")
-
+    password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Hasło"}), validators=[validate_password], label="")
+    repeat_password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Powtórz hasło"}), validators=[validate_password], label="")
     class Meta:
         model = User
         fields = [
@@ -17,28 +19,33 @@ class RegisterForm(forms.ModelForm):
             'password',
             'repeat_password'
         ]
+
         widgets = {
             'first_name': forms.TextInput(attrs={'placeholder': 'Imię'}),
             'last_name': forms.TextInput(attrs={'placeholder': 'Nazwisko'}),
             'email': forms.EmailInput(attrs={'placeholder': 'Email'}),
-            'password': forms.PasswordInput(attrs={'placeholder': 'Hasło'}),
+
         }
         labels = {
             'first_name': '',
             'last_name': '',
             'email': '',
-            'password': '',
+
         }
 
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         repeat_password = cleaned_data.get("repeat_password")
+        email = cleaned_data.get('email')
 
         if password != repeat_password:
             msg = "Hasła muszą być takie same."
             self.add_error('password', msg)
             self.add_error('repeat_password', msg)
+
+        if User.objects.get(email=email):
+            self.add_error('email', "Podany email jest już zajęty.")
 
 
 class DonationForm(forms.ModelForm):
@@ -56,7 +63,7 @@ class DonationForm(forms.ModelForm):
         }
         help_texts = {
             'categories': 'Wybierz co najmniej jedną kategorię. Wymagane.',
-            'quantity': 'Podaj liczbe. Wymagane.',
+            'quantity': 'Podaj liczbę. Wymagane.',
             'institution': 'Wybierz jedną organizację. Wymagane.',
             'address': 'Wymagane.',
             'zip_code': 'Wymagane.',

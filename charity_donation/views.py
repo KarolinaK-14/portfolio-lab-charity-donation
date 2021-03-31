@@ -59,8 +59,8 @@ class LandingPage(View):
             return render(request, "index.html", {"form": form, 'name': name})
         return render(request, "index.html", {"form": form})
 
-class AddDonation(View):
-
+class AddDonation(LoginRequiredMixin, View):
+    login_url = reverse_lazy('login')
     def get(self, request):
         form = DonationForm()
         institutions = Institution.objects.all()
