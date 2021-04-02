@@ -94,7 +94,7 @@ class DonationConfirmation(TemplateView):
 
 class Login(FormView):
     form_class = AuthenticationForm
-    template_name = "login.html"
+    template_name = "registration/login.html"
     success_url = reverse_lazy("landing_page")
 
     def form_valid(self, form):
