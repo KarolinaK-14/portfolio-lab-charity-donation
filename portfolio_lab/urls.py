@@ -22,26 +22,32 @@ from .settings import DEBUG
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-
-    path('accounts/password_reset/', auth_views.PasswordResetView.as_view(form_class=EmailValidationOnForgotPassword), name='password_reset'),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('login/', v.Login.as_view(), name='login'),
-    path("logout/", auth_views.LogoutView.as_view(next_page="landing_page"), name="logout"),
-    path('', v.LandingPage.as_view(), name='landing_page'),
-    path('add-donation/', v.AddDonation.as_view(), name='add_donation'),
-    path('donation-confirmation/', v.DonationConfirmation.as_view(), name='donation_confirmation'),
-    path('register/', v.Register.as_view(), name='register'),
-    path('user/', v.User.as_view(), name='user'),
-    path('archive/<int:pk>/', v.Archive.as_view(), name='archive'),
-    path('edit-user/', v.UserUpdate.as_view(), name='edit-user'),
-    path('change-password/', v.PasswordChange.as_view(), name='change-password'),
-    path('activate/<uidb64>/<token>/', v.ActivateAccount.as_view(), name='activate'),
-
+    path("admin/", admin.site.urls),
+    path(
+        "accounts/password_reset/",
+        auth_views.PasswordResetView.as_view(
+            form_class=EmailValidationOnForgotPassword
+        ),
+        name="password_reset",
+    ),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("login/", v.Login.as_view(), name="login"),
+    path(
+        "logout/",
+        auth_views.LogoutView.as_view(next_page="landing_page"),
+        name="logout",
+    ),
+    path("", v.LandingPage.as_view(), name="landing_page"),
+    path("add-donation/", v.AddDonation.as_view(), name="add_donation"),
+    path(
+        "donation-confirmation/",
+        v.DonationConfirmation.as_view(),
+        name="donation_confirmation",
+    ),
+    path("register/", v.Register.as_view(), name="register"),
+    path("user/", v.User.as_view(), name="user"),
+    path("archive/<int:pk>/", v.Archive.as_view(), name="archive"),
+    path("edit-user/", v.UserUpdate.as_view(), name="edit-user"),
+    path("change-password/", v.PasswordChange.as_view(), name="change-password"),
+    path("activate/<uidb64>/<token>/", v.ActivateAccount.as_view(), name="activate"),
 ]
-
-if DEBUG:
-    import debug_toolbar
-    urlpatterns = [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns

@@ -10,20 +10,8 @@ from django.contrib.auth.admin import UserAdmin
 
 
 class MyUserAdmin(UserAdmin):
-    actions = ['delete_selected']
-    #
-    # def delete_selected(self, request, obj):
-    #     for o in obj.all():
-    #         print(request.user)
-    #         if o is request.user:
-    #             messages.error(request, 'Nie możesz usunąć samego siebie')
-    #         else:
-    #             obj_display = str(o)
-    #             self.log_deletion(request, obj, obj_display)
-    #
-    #             o.delete()
-    #
-    # delete_selected.short_description = 'Ausgewählte Rechnungen löschen'
+    actions = ["delete_selected"]
+
     def delete_selected(self, request, queryset):
         """
         Default action which deletes the selected objects.
@@ -39,18 +27,23 @@ class MyUserAdmin(UserAdmin):
 
         # Populate deletable_objects, a data structure of all related objects that
         # will also be deleted.
-        deletable_objects, model_count, perms_needed, protected = self.get_deleted_objects(queryset, request)
+        (
+            deletable_objects,
+            model_count,
+            perms_needed,
+            protected,
+        ) = self.get_deleted_objects(queryset, request)
         staff_count = [o.is_staff for o in queryset]
         if len(staff_count) == 1:
-            messages.error(request, 'NIE')
+            messages.error(request, "NIE")
             protected.append("Nie możesz skasować ostatniego administratora.")
         if request.user in queryset:
-            messages.error(request, 'NIE')
+            messages.error(request, "NIE")
             protected.append("Nie możesz skasować samego siebie.")
 
         # The user has already confirmed the deletion.
         # Do the deletion and return None to display the change list view again.
-        if request.POST.get('post') and not protected:
+        if request.POST.get("post") and not protected:
             if perms_needed:
                 raise PermissionDenied
             n = queryset.count()
@@ -59,9 +52,12 @@ class MyUserAdmin(UserAdmin):
                     obj_display = str(obj)
                     self.log_deletion(request, obj, obj_display)
                 self.delete_queryset(request, queryset)
-                self.message_user(request, ("Pomyślnie usunięto %(count)d %(items)s.") % {
-                    "count": n, "items": model_ngettext(self.opts, n)
-                }, messages.SUCCESS)
+                self.message_user(
+                    request,
+                    ("Pomyślnie usunięto %(count)d %(items)s.")
+                    % {"count": n, "items": model_ngettext(self.opts, n)},
+                    messages.SUCCESS,
+                )
             # Return None to display the change list page again.
             return None
 
@@ -70,33 +66,41 @@ class MyUserAdmin(UserAdmin):
         if perms_needed or protected:
             title = ("Nie można usunąć %(name)s") % {"name": objects_name}
         else:
-            title = ("Jesteś pewien?")
+            title = "Jesteś pewien?"
 
         context = {
             **self.admin_site.each_context(request),
-            'title': title,
-            'objects_name': str(objects_name),
-            'deletable_objects': [deletable_objects],
-            'model_count': dict(model_count).items(),
-            'queryset': queryset,
-            'perms_lacking': perms_needed,
-            'protected': protected,
-            'opts': opts,
-            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
-            'media': self.media,
+            "title": title,
+            "objects_name": str(objects_name),
+            "deletable_objects": [deletable_objects],
+            "model_count": dict(model_count).items(),
+            "queryset": queryset,
+            "perms_lacking": perms_needed,
+            "protected": protected,
+            "opts": opts,
+            "action_checkbox_name": helpers.ACTION_CHECKBOX_NAME,
+            "media": self.media,
         }
 
         request.current_app = self.admin_site.name
 
         # Display the confirmation page
-        return TemplateResponse(request, self.delete_selected_confirmation_template or [
-            "admin/%s/%s/delete_selected_confirmation.html" % (app_label, opts.model_name),
-            "admin/%s/delete_selected_confirmation.html" % app_label,
-            "admin/delete_selected_confirmation.html"
-        ], context)
-    delete_selected.short_description = 'Usuń wybranych użytkowników'
+        return TemplateResponse(
+            request,
+            self.delete_selected_confirmation_template
+            or [
+                "admin/%s/%s/delete_selected_confirmation.html"
+                % (app_label, opts.model_name),
+                "admin/%s/delete_selected_confirmation.html" % app_label,
+                "admin/delete_selected_confirmation.html",
+            ],
+            context,
+        )
 
-admin.site.site_header = 'Oddam w dobre ręce'
+    delete_selected.short_description = "Usuń wybranych użytkowników"
+
+
+admin.site.site_header = "Oddam w dobre ręce"
 admin.site.unregister(User)
 admin.site.register(User, MyUserAdmin)
 admin.site.unregister(Group)

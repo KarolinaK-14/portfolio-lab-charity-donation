@@ -10,23 +10,37 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('charity_donation', '0001_initial'),
+        ("charity_donation", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='donation',
-            name='phone_number',
-            field=models.CharField(max_length=12, validators=[django.core.validators.RegexValidator(message='Podaj poprawny numer telefonu w formacie +99999999999', regex='^\\+?\\d{9,12}$')]),
+            model_name="donation",
+            name="phone_number",
+            field=models.CharField(
+                max_length=12,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message="Podaj poprawny numer telefonu w formacie +99999999999",
+                        regex="^\\+?\\d{9,12}$",
+                    )
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='donation',
-            name='pick_up_comment',
+            model_name="donation",
+            name="pick_up_comment",
             field=models.TextField(null=True),
         ),
         migrations.AlterField(
-            model_name='donation',
-            name='user',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="donation",
+            name="user",
+            field=models.ForeignKey(
+                blank=True,
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

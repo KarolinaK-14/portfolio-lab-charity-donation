@@ -16,37 +16,108 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=120)),
             ],
         ),
         migrations.CreateModel(
-            name='Institution',
+            name="Institution",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
-                ('description', models.TextField()),
-                ('type', models.CharField(choices=[('fundacja', 'fundacja'), ('organizacja pozarządowa', 'organizacja pozarządowa'), ('zbiórka lokalna', 'zbiórka lokalna')], default='fundacja', max_length=60)),
-                ('categories', models.ManyToManyField(to='charity_donation.Category')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=120)),
+                ("description", models.TextField()),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[
+                            ("fundacja", "fundacja"),
+                            ("organizacja pozarządowa", "organizacja pozarządowa"),
+                            ("zbiórka lokalna", "zbiórka lokalna"),
+                        ],
+                        default="fundacja",
+                        max_length=60,
+                    ),
+                ),
+                ("categories", models.ManyToManyField(to="charity_donation.Category")),
             ],
         ),
         migrations.CreateModel(
-            name='Donation',
+            name="Donation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.IntegerField()),
-                ('address', models.CharField(max_length=60)),
-                ('phone_number', models.CharField(max_length=12, verbose_name=[django.core.validators.RegexValidator(message='Podaj poprawny numer telefonu w formacie +99999999999', regex='^\\+?\\d{9,12}$')])),
-                ('city', models.CharField(max_length=60)),
-                ('zip_code', models.CharField(max_length=6, validators=[django.core.validators.RegexValidator(message='Podaj poprawny kod pocztowy w formacie 99-999', regex='^\\d{2}-\\d{3}$')])),
-                ('pick_up_date', models.DateField()),
-                ('pick_up_time', models.TimeField()),
-                ('pick_up_comment', models.TextField()),
-                ('categories', models.ManyToManyField(to='charity_donation.Category')),
-                ('institution', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='charity_donation.institution')),
-                ('user', models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.IntegerField()),
+                ("address", models.CharField(max_length=60)),
+                (
+                    "phone_number",
+                    models.CharField(
+                        max_length=12,
+                        verbose_name=[
+                            django.core.validators.RegexValidator(
+                                message="Podaj poprawny numer telefonu w formacie +99999999999",
+                                regex="^\\+?\\d{9,12}$",
+                            )
+                        ],
+                    ),
+                ),
+                ("city", models.CharField(max_length=60)),
+                (
+                    "zip_code",
+                    models.CharField(
+                        max_length=6,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Podaj poprawny kod pocztowy w formacie 99-999",
+                                regex="^\\d{2}-\\d{3}$",
+                            )
+                        ],
+                    ),
+                ),
+                ("pick_up_date", models.DateField()),
+                ("pick_up_time", models.TimeField()),
+                ("pick_up_comment", models.TextField()),
+                ("categories", models.ManyToManyField(to="charity_donation.Category")),
+                (
+                    "institution",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="charity_donation.institution",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        default=None,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]
