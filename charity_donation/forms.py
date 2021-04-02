@@ -1,5 +1,7 @@
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.password_validation import password_validators_help_texts, password_validators_help_text_html, \
     validate_password
+from django.core.exceptions import ValidationError
 
 from charity_donation.models import Donation, Category, Institution
 
@@ -40,7 +42,7 @@ class RegisterForm(forms.ModelForm):
         email = cleaned_data.get('email')
 
         if password != repeat_password:
-            msg = "Hasła muszą być takie same."
+            msg = "Hasła w obu polach nie są zgodne."
             self.add_error('password', msg)
             self.add_error('repeat_password', msg)
 
@@ -84,3 +86,14 @@ class ContactForm(forms.Form):
     message = forms.CharField(
         widget=forms.Textarea(attrs={"placeholder": "Wiadomość", "rows": "1"})
     )
+
+
+class EmailValidationOnForgotPassword(PasswordResetForm):
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise ValidationError("Użytkownik z takim adresem e-mail nie istnieje.")
+
+        return email
+
+
