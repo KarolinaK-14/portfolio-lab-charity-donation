@@ -4,14 +4,10 @@
 {% with add_donation=True %}
     <header class="header--main-page">
       <nav class="container container--70">
-
         {{ block.super }}
-
       </nav>
-
       <div class="slogan container container--90">
         <div class="slogan--item">
-
           <h1>
             Zacznij pomagać!<br />
             Oddaj niechciane rzeczy w zaufane ręce
@@ -23,6 +19,7 @@
 {% endblock header %}
 
 {% block content %}
+
     <section id="stats" class="stats">
       <div class="container container--85">
         <div class="stats--item">
@@ -30,13 +27,11 @@
           <h3>Oddanych worków</h3>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius est beatae, quod accusamus illum tempora!</p>
         </div>
-
         <div class="stats--item">
           <em>{{ institutions }}</em>
           <h3>Wspartych organizacji</h3>
           <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam magnam, sint nihil cupiditate quas quam.</p>
         </div>
-
       </div>
     </section>
 
@@ -65,8 +60,7 @@
           <p>kurier przyjedzie w dogodnym terminie</p>
         </div>
       </div>
-
-      <a href="{% url 'register' %}#register-form" class="btn btn--large">Załóż konto</a>
+      <a href="{% url 'new_user' %}#register-form" class="btn btn--large">Załóż konto</a>
     </section>
 
     <section id="about-us" class="about-us">
@@ -78,7 +72,7 @@
       <div class="about-us--image"><img src="{% static 'images/about-us.jpg' %}" alt="People in circle" /></div>
     </section>
 
-     <section id="help" class="help">
+    <section id="help" class="help">
       <h2>Komu pomagamy?</h2>
 
       <ul class="help--buttons">
@@ -90,9 +84,7 @@
       <!-- SLIDE 1 -->
       <div class="help--slides {% if request.GET.page1 or not request.GET %}active{% endif %}" data-id="1">
         <p>W naszej bazie znajdziesz listę zweryfikowanych Fundacji, z którymi współpracujemy. Możesz sprawdzić czym się zajmują, komu pomagają i czego potrzebują.</p>
-
         <ul class="help--slides-items">
-
           {% for foundation in foundations %}
           <li>
             <div class="col">
@@ -114,12 +106,10 @@
         <!-- Pagination -->
         <ul class="help--slides-pagination">
           {% for i in foundations.paginator.page_range %}
-          <li><a class="btn--small btn--without-border {% if foundations.number == i %}btn--highlighted{% endif %}" href="?page1={{ i }}#help">{{ i }}</a></li>
+          <li><a class="btn--small btn--without-border{% if foundations.number == i %}btn--highlighted{% endif %}" href="?page1={{ i }}#help">{{ i }}</a></li>
           {% endfor %}
         </ul>
-
       </div>
-
 
       <!-- SLIDE 2 -->
       <div class="help--slides {% if request.GET.page2 %}active{% endif %}" data-id="2">
@@ -149,10 +139,9 @@
         <!-- Pagination -->
         <ul class="help--slides-pagination">
           {% for i in non_gov_organizations.paginator.page_range %}
-          <li><a class="btn--small btn--without-border {% if non_gov_organizations.number == i %}btn--highlighted{% endif %}" href="?page2={{ i }}#help">{{ i }}</a></li>
+          <li><a class="btn--small btn--without-border{% if non_gov_organizations.number == i %}btn--highlighted{% endif %}" href="?page2={{ i }}#help">{{ i }}</a></li>
           {% endfor %}
         </ul>
-
       </div>
 
       <!-- SLIDE 3 -->
@@ -180,10 +169,9 @@
         <!-- Pagination -->
         <ul class="help--slides-pagination">
           {% for i in collections.paginator.page_range %}
-          <li><a class="btn--small btn--without-border {% if collections.number == i %}btn--highlighted{% endif %}" href="?page3={{ i }}#help">{{ i }}</a></li>
+          <li><a class="btn--small btn--without-border{% if collections.number == i %}btn--highlighted{% endif %}" href="?page3={{ i }}#help">{{ i }}</a></li>
           {% endfor %}
         </ul>
-
       </div>
     </section>
 

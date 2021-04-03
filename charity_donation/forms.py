@@ -9,7 +9,15 @@ from django import forms
 from django.contrib.auth.models import User
 
 
-class RegisterForm(forms.ModelForm):
+class ContactForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Imię"}))
+    surname = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Nazwisko"}))
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={"placeholder": "Wiadomość", "rows": "1"})
+    )
+
+
+class UserForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={"placeholder": "Hasło"}),
         validators=[validate_password],
@@ -47,8 +55,19 @@ class RegisterForm(forms.ModelForm):
             self.add_error("password", msg)
             self.add_error("repeat_password", msg)
 
-        if User.objects.get(email=email):
-            self.add_error("email", "Podany email jest już zajęty.")
+        try:
+            if User.objects.get(email=email):
+                self.add_error("email", "Podany email jest już zajęty.")
+        except User.DoesNotExist:
+            pass
+
+
+class EmailValidationOnForgotPassword(PasswordResetForm):
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise ValidationError("Użytkownik z takim adresem e-mail nie istnieje.")
+        return email
 
 
 class DonationForm(forms.ModelForm):
@@ -76,30 +95,13 @@ class DonationForm(forms.ModelForm):
             "pick_up_comment": forms.Textarea(attrs={"rows": 5}),
         }
         help_texts = {
-            "categories": "Wybierz co najmniej jedną kategorię. Wymagane.",
-            "quantity": "Podaj liczbę. Wymagane.",
-            "institution": "Wybierz jedną organizację. Wymagane.",
-            "address": "Wymagane.",
-            "zip_code": "Wymagane.",
-            "city": "Wymagane.",
-            "phone_number": "Wymagane.",
-            "pick_up_date": "Wymagane.",
-            "pick_up_time": "Wymagane.",
+            "categories": "Wybierz co najmniej jedną kategorię. Pole wymagane.",
+            "quantity": "Podaj liczbę. Pole wymagane.",
+            "institution": "Wybierz jedną organizację. Pole wymagane.",
+            "address": "Pole wymagane.",
+            "zip_code": "Pole wymagane.",
+            "city": "Pole wymagane.",
+            "phone_number": "Pole wymagane.",
+            "pick_up_date": "Pole wymagane.",
+            "pick_up_time": "Pole wymagane.",
         }
-
-
-class ContactForm(forms.Form):
-    name = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Imię"}))
-    surname = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Nazwisko"}))
-    message = forms.CharField(
-        widget=forms.Textarea(attrs={"placeholder": "Wiadomość", "rows": "1"})
-    )
-
-
-class EmailValidationOnForgotPassword(PasswordResetForm):
-    def clean_email(self):
-        email = self.cleaned_data["email"]
-        if not User.objects.filter(email__iexact=email, is_active=True).exists():
-            raise ValidationError("Użytkownik z takim adresem e-mail nie istnieje.")
-
-        return email

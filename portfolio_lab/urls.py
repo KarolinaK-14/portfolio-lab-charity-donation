@@ -18,36 +18,33 @@ from django.contrib import admin
 from django.urls import path, include
 from charity_donation import views as v
 from charity_donation.forms import EmailValidationOnForgotPassword
-from .settings import DEBUG
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path(
-        "accounts/password_reset/",
-        auth_views.PasswordResetView.as_view(
-            form_class=EmailValidationOnForgotPassword
-        ),
-        name="password_reset",
-    ),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("login/", v.Login.as_view(), name="login"),
+    path("", v.LandingPage.as_view(), name="landing_page"),
+    path("contact/", v.ContactView.as_view(), name="contact"),
+    path("login/", v.LoginView.as_view(), name="login"),
     path(
         "logout/",
         auth_views.LogoutView.as_view(next_page="landing_page"),
         name="logout",
     ),
-    path("", v.LandingPage.as_view(), name="landing_page"),
-    path("add-donation/", v.AddDonation.as_view(), name="add_donation"),
+    path("new-user/", v.UserCreationView.as_view(), name="new_user"),
     path(
-        "donation-confirmation/",
-        v.DonationConfirmation.as_view(),
-        name="donation_confirmation",
+        "activate/<uidb64>/<token>/", v.ActivateAccountView.as_view(), name="activate"
     ),
-    path("register/", v.Register.as_view(), name="register"),
-    path("user/", v.User.as_view(), name="user"),
-    path("archive/<int:pk>/", v.Archive.as_view(), name="archive"),
-    path("edit-user/", v.UserUpdate.as_view(), name="edit-user"),
-    path("change-password/", v.PasswordChange.as_view(), name="change-password"),
-    path("activate/<uidb64>/<token>/", v.ActivateAccount.as_view(), name="activate"),
+    path(
+        "password_reset/",
+        auth_views.PasswordResetView.as_view(
+            form_class=EmailValidationOnForgotPassword
+        ),
+        name="password_reset",
+    ),
+    path("add-donation/", v.AddDonationView.as_view(), name="add_donation"),
+    path("user-profile/", v.UserProfile.as_view(), name="user_profile"),
+    path("archive/<int:pk>/", v.ArchiveView.as_view(), name="archive"),
+    path("edit-user/", v.UserEditView.as_view(), name="edit_user"),
+    path("change-password/", v.PasswordChange.as_view(), name="change_password"),
 ]

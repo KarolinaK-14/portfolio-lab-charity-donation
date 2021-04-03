@@ -33,12 +33,13 @@ class MyUserAdmin(UserAdmin):
             perms_needed,
             protected,
         ) = self.get_deleted_objects(queryset, request)
-        staff_count = [o.is_staff for o in queryset]
-        if len(staff_count) == 1:
-            messages.error(request, "NIE")
+        staff_all = User.objects.filter(is_staff=True)
+        staff_selected = [i.is_staff for i in queryset]
+        if len(staff_selected) >= len(staff_all):
+            messages.error(request, "Akcja nie jest możliwa.")
             protected.append("Nie możesz skasować ostatniego administratora.")
         if request.user in queryset:
-            messages.error(request, "NIE")
+            messages.error(request, "Akcja nie jest możliwa.")
             protected.append("Nie możesz skasować samego siebie.")
 
         # The user has already confirmed the deletion.

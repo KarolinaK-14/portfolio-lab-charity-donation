@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block header %}
+{% with add_donation=True %}
     <header class="header--form-page">
       <nav class="container container--70">
 
@@ -35,12 +36,13 @@
         </div>
       </div>
     </header>
-
+{% endwith %}
 {% endblock header %}
 
 {% block content %}
     <section class="form--steps" id="donation">
       <div class="form--steps-instructions">
+
         <div class="form--steps-container">
           <h3>Ważne!</h3>
 
@@ -60,19 +62,27 @@
         </div>
       </div>
 
+        <div style="margin: 0 auto">
+            <ul class="messagelist">
+            {% if messages %}
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+            {% endif %}
+                <li class="error" id="error-msg" style="display: none">Uzupełnij wszystkite wymagane pola.</li>
+            </ul>
+        </div>
+
       <div class="form--steps-container">
         <div class="form--steps-counter">Krok <span>1</span>/5</div>
 
         <form action="" method="post" >{%csrf_token%}
 
 
-
           <!-- STEP 1: class .active is switching steps -->
-
           <div data-step="1" class="active">
-
             <h3>Zaznacz co chcesz oddać:</h3>
-<smaller style="color: green">{{form.categories.help_text}}</smaller><br><br>
+            <smaller style="color: red">{{form.categories.help_text}}</smaller><br><br>
             {% for choice in form.categories %}
             <div class="form-group form-group--checkbox">
               <label>
@@ -83,7 +93,6 @@
 
             </div>
             {% endfor %}
-
             <div class="form-group form-group--buttons">
               <button id="chosen-categories" type="button" class="btn next-step">Dalej</button>
             </div>
@@ -92,13 +101,12 @@
           <!-- STEP 2 -->
           <div data-step="2">
             <h3>Podaj liczbę 60l worków, w które spakowałeś/aś rzeczy:</h3>
-            <smaller style="color: green">{{form.quantity.help_text}}</smaller><br><br>
+            <smaller style="color: red">{{form.quantity.help_text}}</smaller><br><br>
             <div class="form-group form-group--inline">
               <label>
                 Liczba 60l worków:
                 {{form.quantity}}
               </label>
-
             </div>
 
             <div class="form-group form-group--buttons">
@@ -107,14 +115,11 @@
             </div>
           </div>
 
-
-
           <!-- STEP 3 -->
           <div data-step="3">
             <h3>Wybierz organizację, której chcesz pomóc:</h3>
-             <smaller style="color: green">{{form.institution.help_text}}</smaller><br><br>
+            <smaller style="color: red">{{form.institution.help_text}}</smaller><br><br>
             {% for radio in form.institution %}
-
             <div id="institution" class="form-group form-group--checkbox">
               <label id="institution-label">
                 {{ radio.tag }}
@@ -130,12 +135,9 @@
                     {%endif%}
                     {%endfor%}
                   </div>
-
                 </span>
               </label>
-
             </div>
-
             {% endfor %}
 
             <div class="form-group form-group--buttons">
@@ -153,23 +155,25 @@
                 <h4>Adres odbioru</h4>
                 <div class="form-group form-group--inline">
                   <label> Ulica {{form.address}} </label>
-                  <smaller style="color: green">{{form.address.help_text}}</smaller>
+                  <smaller style="color: red">{{form.address.help_text}}</smaller>
                 </div>
 
                 <div class="form-group form-group--inline">
                   <label> Miasto {{form.city}} </label>
-                  <smaller style="color: green">{{form.city.help_text}}</smaller>
+                  <smaller style="color: red">{{form.city.help_text}}</smaller>
                 </div>
                 <div class="form-message"></div>
 
                 <div class="form-group form-group--inline">
                   <label>Kod pocztowy {{form.zip_code}}</label>
-                  <smaller style="color: green">{{form.zip_code.help_text}}</smaller>
+                  <smaller style="color: red">{{form.zip_code.help_text}}<br>
+                      <strong>{{form.zip_code.errors.0}}</strong></smaller>
                 </div>
 
                 <div class="form-group form-group--inline">
                   <label>Numer telefonu {{form.phone_number}}</label>
-                  <smaller style="color: green">{{form.phone_number.help_text}}</smaller>
+                  <smaller style="color: red">{{form.phone_number.help_text}}<br>
+                      <strong>{{form.phone_number.errors.0}}</strong></smaller>
                 </div>
               </div>
 
@@ -177,12 +181,13 @@
                 <h4>Termin odbioru</h4>
                 <div class="form-group form-group--inline">
                   <label> Data {{form.pick_up_date}} </label>
-                  <smaller style="color: green">{{form.pick_up_date.help_text}}</smaller>
+                  <smaller style="color: red">{{form.pick_up_date.help_text}}<br>
+                    <strong>{{form.pick_up_date.errors.0}}</strong></smaller>
                 </div>
 
                 <div class="form-group form-group--inline">
                   <label> Godzina {{form.pick_up_time}} </label>
-                  <smaller style="color: green">{{form.pick_up_time.help_text}}</smaller>
+                  <smaller style="color: red">{{form.pick_up_time.help_text}}</smaller>
                 </div>
 
                 <div class="form-group form-group--inline">
@@ -202,7 +207,11 @@
           <!-- STEP 5 -->
           <div data-step="5">
 
-            <h3 style="text-align: center; color: green;" id="error-msg"></h3>
+{#            <div id="error-msg" style="display: none">#}
+{#                <ul class="messagelist">#}
+{#                    <li class="error">Uzupełnij wszystkite wymagane pola</li>#}
+{#                </ul>#}
+{#            </div>#}
 
             <h3>Podsumowanie Twojej darowizny</h3>
 
@@ -214,7 +223,6 @@
                     <span class="icon icon-bag"></span>
                     <span class="summary--text"></span>
                   </li>
-
                   <li>
                     <span class="icon icon-hand"></span>
                     <span class="summary--text"></span>
@@ -252,73 +260,4 @@
         </form>
       </div>
     </section>
-<script>
-  function testText(field, lng) {
-    return field.value.length >= lng;
-};
-
-
-  function removeFieldError(field) {
-    const errorText = field.nextElementSibling;
-    if (errorText !== null) {
-        if (errorText.classList.contains("form-error-text")) {
-            errorText.remove();
-        }
-    }
-};
-
-function createFieldError(field, text) {
-    removeFieldError(field); //przed stworzeniem usuwam by zawsze był najnowszy komunikat
-
-    const div = document.createElement("div");
-    div.classList.add("form-error-text");
-    div.innerText = text;
-    if (field.nextElementSibling === null) {
-        field.parentElement.appendChild(div);
-    } else {
-        if (!field.nextElementSibling.classList.contains("form-error-text")) {
-            field.parentElement.insertBefore(div, field.nextElementSibling);
-        }
-    }
-};
-
-function markFieldAsError(field, show) {
-    if (show) {
-        field.classList.add("field-error");
-    } else {
-        field.classList.remove("field-error");
-        removeFieldError(field);
-    }
-};
-
-//pobieram elementy
-const form = document.getElementById("donation-confirmation");
-const inputName = form.querySelector("input[name=city]");
-const formMessage = form.querySelector(".form-message");
-
-//etap 1 : podpinam eventy
-inputName.addEventListener("input", e => markErrorField(e.target, !testText(e.target, 3)));
-
-form.addEventListener("click", e => {
-    e.preventDefault();
-
-    let formErrors = false;
-
-    //2 etap - sprawdzamy poszczególne pola gdy ktoś chce wysłać formularz
-    for (const el of [inputName,]) {
-        markFieldAsError(el, false);
-        removeFieldError(el);
-    }
-
-    if (!testText(inputName, 3)) {
-        markFieldAsError(inputName, true);
-        createFieldError(inputName, "Wpisana wartość jest niepoprawna");
-        formErrors = true;
-    }
-
-    if (!formErrors) {
-        e.target.submit();
-    }
-});
-</script>
 {% endblock content %}

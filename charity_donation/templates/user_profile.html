@@ -13,11 +13,11 @@
 {% block content %}
     <section class="about-us">
       <div class="about-us--text">
-        <h2>Profil użytkownika</h2>
+        <h2>Profil użytkownika {{ user.username.upper }}</h2>
 
           <p><strong>Imię: </strong>{{user.first_name|default:"nie podano"}}</p>
           <p><strong>Nazwisko: </strong>{{user.last_name|default:"nie podano"}}</p>
-          <p><strong>Email: </strong>{{user.email}}</p>
+          <p><strong>Email: </strong>{{user.email|default:"nie podano"}}</p>
       </div>
       <div class="about-us--text">
           <p style="font-size: 2.2rem"><strong>Przekazane dary:</strong></p>
@@ -30,12 +30,13 @@
               Kategorie: {%for cat in donation.categories.all%}{{cat}}{% if not forloop.last %}, {% endif %}{%endfor%} //
               Organizacja: {{donation.institution}} // Data odbioru: {{donation.pick_up_date}}
               <br>
-              Status: ODEBRANY Aktualizacja: {{donation.taken_time}}
+              Status: ODEBRANY Aktualizacja: {{donation.taken_time|default:""}}
               <button type="submit" name="archive-remove">Nieodebrany</button>
           </li>
               {%else%}
-          <li>Liczba worków: {{donation.quantity}} // Kategorie: {%for cat in donation.categories.all%}{{cat}}{% if not forloop.last %}, {% endif %}{%endfor%} // Organizacja: {{donation.institution}}
-              // Data odbioru: {{donation.pick_up_date}}
+          <li>Liczba worków: {{donation.quantity}} //
+              Kategorie: {%for cat in donation.categories.all%}{{cat}}{% if not forloop.last %}, {% endif %}{%endfor%} //
+              Organizacja: {{donation.institution}} // Data odbioru: {{donation.pick_up_date}}
               <br>
               Status: NIEODEBRANY Aktualizacja {{donation.taken_time}}
               <button type="submit" name="archive-add">Odebrany</button>

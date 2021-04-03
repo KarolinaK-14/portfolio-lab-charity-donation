@@ -12,14 +12,23 @@
 
 {% block header %}
 
+    <div style="margin: 0 auto">
+    {% if messages %}
+    <ul class="messagelist">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    </div>
 
 <ul class="nav--actions">
   {% if user.is_authenticated %}
   <li class="logged-user">
     Witaj {{ user }}
     <ul class="dropdown">
-      <li><a href="{% url 'user' %}">Profil</a></li>
-      <li><a href="{% url 'edit-user' %}">Ustawienia</a></li>
+      <li><a href="{% url 'user_profile' %}">Profil</a></li>
+      <li><a href="{% url 'edit_user' %}">Ustawienia</a></li>
       {% if user.is_staff and user.is_superuser %}
       <li><a href="{% url 'admin:index' %}">Panel administracyjny</a></li>
       {% endif %}
@@ -28,7 +37,7 @@
   </li>
 {% else  %}
   <li><a href="{% url 'login' %}" class="btn btn--small btn--without-border">Zaloguj</a></li>
-  <li><a href="{% url 'register' %}#register-form" class="btn btn--small btn--highlighted">Załóż konto</a></li>
+  <li><a href="{% url 'new_user' %}#register-form" class="btn btn--small btn--highlighted">Załóż konto</a></li>
 {% endif %}
 </ul>
 <ul>
@@ -42,37 +51,32 @@
   <li><a href="#contact" class="btn btn--without-border">Kontakt</a></li>
 </ul>
 
-
 {% endblock header %}
 
 {% block content %}{% endblock content %}
 
-  <footer>
-
-<div id="contact" class="contact">
-            {% if name %}
-            <div style="text-align: center; color: green">
-                <h3>Dziękujemy {{ name }}!</h3>
-                <p>Otrzymaliśmy Twoją wiadomość. Wkrótce się odezwiemy.</p>
-            </div>
-            {% endif %}
+{% block footer %}
+<footer>
+    <div id="contact" class="contact">
         <h2>Skontaktuj się z nami</h2>
         <h3>Formularz kontaktowy</h3>
-        <form class="form--contact" method="post" action="">{% csrf_token %}
-          <div class="form-group form-group--50">{{form.name}}</div>
-          <div class="form-group form-group--50">{{form.surname}}</div>
-          <div class="form-group">{{form.message}}</div>
+        <form class="form--contact" method="post" action="{% url 'contact' %}">{% csrf_token %}
+          <div class="form-group form-group--50">{{contact_form.name}}</div>
+          <div class="form-group form-group--50">{{contact_form.surname}}</div>
+          <div class="form-group">{{contact_form.message}}</div>
           <button class="btn" type="submit">Wyślij</button>
         </form>
-      </div>
-      <div class="bottom-line">
+    </div>
+
+    <div class="bottom-line">
         <span class="bottom-line--copy">Copyright &copy; 2021</span>
         <div class="bottom-line--icons">
           <a href="#" class="btn btn--small"><img src="{% static 'images/icon-facebook.svg' %}"/></a>
           <a href="#" class="btn btn--small"><img src="{% static 'images/icon-instagram.svg' %}"/></a>
         </div>
-      </div>
-  </footer>
+    </div>
+</footer>
+{% endblock footer %}
 <script src="{% static 'js/app.js' %}"></script>
 </body>
 </html>

@@ -289,12 +289,12 @@ document.addEventListener("DOMContentLoaded", function() {
        */
       const submit_prev_btn = document.getElementById("submit-prev");
       submit_prev_btn.addEventListener("click", e => {
-        document.getElementById("error-msg").innerHTML="";
+        document.getElementById("error-msg").style.display = "none";
       });
       const submit_btn = document.getElementById("submit-btn");
       submit_btn.addEventListener("click", e => {
         if (document.querySelector("form").checkValidity() === false) {
-          document.getElementById("error-msg").innerText = "Uzupełnij wszystkie pola formularza";
+          document.getElementById("error-msg").style.display = "inline";
         }
       });
     }
