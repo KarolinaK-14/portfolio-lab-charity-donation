@@ -27,7 +27,7 @@ from .tokens import account_activation_token
 
 class LandingPage(View):
     def get(self, request):
-        paginator1 = Paginator(Institution.objects.filter(type="fundacja"), 5)
+        paginator1 = Paginator(Institution.objects.filter(type="fundacja"), 1)
         page1 = request.GET.get("page1")
         paginator2 = Paginator(
             Institution.objects.filter(type="organizacja pozarządowa"), 5
@@ -57,7 +57,7 @@ class ContactView(View):
             admins = U.objects.filter(is_staff=True, is_superuser=True)
             send_mail(
                 subject=f"Oddam w dobre ręce - Wiadomość od użytkownika {name.capitalize()} {surname.capitalize()}",
-                message=form.cleaned_data["message"],
+                message=contact_form.cleaned_data["message"],
                 from_email=None,
                 recipient_list=[a.email for a in admins],
             )
