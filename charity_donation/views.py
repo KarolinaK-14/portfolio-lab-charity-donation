@@ -27,22 +27,22 @@ from .tokens import account_activation_token
 
 class LandingPage(View):
     def get(self, request):
-        paginator1 = Paginator(Institution.objects.filter(type="fundacja"), 1)
-        page1 = request.GET.get("page1")
-        paginator2 = Paginator(
+        paginator_foundation = Paginator(Institution.objects.filter(type="fundacja"), 1)
+        page_foundation = request.GET.get("page_foundation")
+        paginator_organization = Paginator(
             Institution.objects.filter(type="organizacja pozarządowa"), 5
         )
-        page2 = request.GET.get("page2")
-        paginator3 = Paginator(Institution.objects.filter(type="zbiórka lokalna"), 5)
-        page3 = request.GET.get("page3")
+        page_organization = request.GET.get("page_organization")
+        paginator_collection = Paginator(Institution.objects.filter(type="zbiórka lokalna"), 5)
+        page_collection = request.GET.get("page_collection")
         context = {
             "donations": Donation.objects.all().aggregate(Sum("quantity"))[
                 "quantity__sum"
             ],
             "institutions": Institution.objects.filter(donation__isnull=False).count(),
-            "foundations": paginator1.get_page(page1),
-            "non_gov_organizations": paginator2.get_page(page2),
-            "collections": paginator3.get_page(page3),
+            "foundations": paginator_foundation.get_page(page_foundation),
+            "non_gov_organizations": paginator_organization.get_page(page_organization),
+            "collections": paginator_collection.get_page(page_collection),
             "form": ContactForm(),
         }
         return render(request, "index.html", context=context)
@@ -64,7 +64,6 @@ class ContactView(View):
             messages.success(
                 request, f"Dziękujemy {name.capitalize()} za Twoją wiadomość."
             )
-            return redirect("landing_page")
         return redirect("landing_page")
 
 
@@ -96,7 +95,7 @@ class UserCreationView(View):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data["password"])
             user.username = form.cleaned_data["email"]
-            user.is_active = False  # Deactivate account till it is confirmed
+            user.is_active = False
             user.save()
             current_site = get_current_site(request)
             subject = "Oddam w dobre ręce - aktywuj konto"
@@ -110,7 +109,7 @@ class UserCreationView(View):
                 },
             )
             user.email_user(subject, message)
-            return render(request, "email_confirmation.html")
+            messages.success(request, "Potwierdź konto klikając w link, który właśnie wysłaliśmy na podany adres e-mail.")
         return render(request, "user_creation_form.html", {"form": form})
 
 
@@ -183,7 +182,7 @@ class AddDonationView(LoginRequiredMixin, View):
 
 class UserProfile(View):
     def get(self, request):
-        user_donations = request.user.donation_set.order_by("is_taken", "-pick_up_time")
+        user_donations = request.user.donation_set.order_by("is_taken", "-pick_up_date", "-pick_up_time")
         return render(request, "user_profile.html", {"user_donations": user_donations})
 
 
@@ -194,11 +193,10 @@ class ArchiveView(View):
             donation.is_taken = True
             donation.taken_time = timezone.now()
             donation.save()
-            return redirect("user_profile")
         if "archive-remove" in request.POST:
             donation.is_taken = False
             donation.save()
-            return redirect("user_profile")
+        return redirect("user_profile")
 
 
 class UserEditView(View):
@@ -225,8 +223,7 @@ class UserEditView(View):
                 request.user.email = email
                 request.user.save()
                 return redirect("user_profile")
-        else:
-            return redirect("edit_user")
+        return redirect("edit_user")
 
 
 class PasswordChange(PasswordChangeView):

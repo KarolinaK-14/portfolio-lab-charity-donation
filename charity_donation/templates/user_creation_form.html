@@ -12,6 +12,15 @@
 
 {% block content %}
     <section class="login-page" id="register-form">
+    <div style="margin: 0 auto">
+    {% if messages %}
+    <ul class="messagelist">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    </div>
       <h2>Załóż konto</h2>
       <form action="" method="post">{% csrf_token %}
           {% for field in form %}

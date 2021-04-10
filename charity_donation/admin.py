@@ -34,7 +34,10 @@ class MyUserAdmin(UserAdmin):
             protected,
         ) = self.get_deleted_objects(queryset, request)
         staff_all = User.objects.filter(is_staff=True)
-        staff_selected = [i.is_staff for i in queryset]
+        staff_selected = []
+        for i in queryset:
+            if i.is_staff:
+                staff_selected.append(i)
         if len(staff_selected) >= len(staff_all):
             messages.error(request, "Akcja nie jest możliwa.")
             protected.append("Nie możesz skasować ostatniego administratora.")

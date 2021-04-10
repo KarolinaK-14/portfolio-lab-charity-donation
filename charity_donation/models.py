@@ -41,7 +41,7 @@ def validate_date(visit_date):
 class Donation(models.Model):
     quantity = models.IntegerField()
     categories = models.ManyToManyField(Category)
-    institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
+    institution = models.ForeignKey(Institution, on_delete=models.PROTECT)
     address = models.CharField(max_length=60)
     phone_number = models.CharField(
         max_length=12,
@@ -66,7 +66,7 @@ class Donation(models.Model):
     pick_up_time = models.TimeField()
     pick_up_comment = models.TextField(null=True, blank=True)
     user = models.ForeignKey(
-        U, on_delete=models.CASCADE, null=True, blank=True, default=None
+        U, on_delete=models.PROTECT, null=True, blank=True, default=None
     )
     is_taken = models.BooleanField(default=False)
     taken_time = models.DateTimeField(null=True, blank=True)
@@ -76,7 +76,7 @@ class Donation(models.Model):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(U, on_delete=models.CASCADE)
+    user = models.OneToOneField(U, on_delete=models.PROTECT)
     email_confirmed = models.BooleanField(default=False)
 
 

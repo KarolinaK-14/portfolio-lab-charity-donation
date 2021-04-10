@@ -256,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function() {
           cat.forEach(function (j) {
             cat_txt.push(j.textContent);
           });
-          if (cat_txt.some(el => c_checked.includes(el)) === false) {
+          if (cat_txt.every(el => c_checked.includes(el)) === false) {
             i.style.display = 'none';
           }
         });
